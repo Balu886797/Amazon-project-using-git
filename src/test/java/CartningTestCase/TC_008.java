@@ -1,4 +1,4 @@
-package TestCases;
+package CartningTestCase;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,11 +19,14 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import PageObject.ChuckOutPage;
 import PageObject.HomePage;
+import PageObject.ShoppingCartPage;
 import PageObject.SignIn;
+import PageObject.YourAccount;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class TC_004 {
+public class TC_008 {
 
 	public  WebDriver driver;
     public Properties pro;
@@ -51,18 +54,28 @@ public class TC_004 {
 	}
 
 		@Test(dataProvider="ReadVariant")
-		public void TC_004(String email, String pass) throws Throwable {
-		    String expectedPasswordAlert=pro.getProperty("expectedPasswordAlert");
+		public void TC_008(String email, String pass) throws Throwable {
+
+		    			
 			HomePage homePage=new HomePage(driver);
 			homePage.loginButtonClick();
 			SignIn login = new SignIn(driver);
-			String actualPasswordAlert = login.SignInuser(email);
-			Assert.assertEquals(actualPasswordAlert, expectedPasswordAlert);
+			login.SignInuser(email, pass);
+			YourAccount account=new YourAccount(driver); 
+			account.NavigateToCart();
+			ShoppingCartPage cart=new ShoppingCartPage(driver);
+			cart.selectCartProduct();
+			String ActualAddressSelectTitle = driver.getTitle();
+			String expectedAddressSelectTitle=pro.getProperty("expectedAddressSelectTitle");
+			Assert.assertEquals(ActualAddressSelectTitle,expectedAddressSelectTitle);
+			ChuckOutPage chuckOut= new ChuckOutPage(driver);
+			chuckOut.BacktoHomepage();
+			account.SignOut();
 		}
 		
 		@AfterTest
 		public void CloseApplication(){
-			driver.close();
+			driver.quit();
 		}
 		@DataProvider
 		 public static Object[][] ReadVariant() throws IOException

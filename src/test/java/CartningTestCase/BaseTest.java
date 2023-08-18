@@ -1,4 +1,4 @@
-package TestCases;
+package CartningTestCase;
 
 import java.io.File;
 import java.io.IOException;

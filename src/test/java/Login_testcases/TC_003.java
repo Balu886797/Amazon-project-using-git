@@ -1,4 +1,4 @@
-package TestCases;
+package Login_testcases;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,10 +21,9 @@ import org.testng.annotations.Test;
 
 import PageObject.HomePage;
 import PageObject.SignIn;
-import PageObject.YourAccount;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class TC_007 {
+public class TC_003 {
 
 	public  WebDriver driver;
     public Properties pro;
@@ -51,62 +50,21 @@ public class TC_007 {
 			
 	}
 
-		@Test(dataProvider="ReadVariant")
-		public void TC_007(String email, String pass) throws Throwable {
+		@Test
+		public void TC_003() throws Throwable {
 
-		    			
 			HomePage homePage=new HomePage(driver);
 			homePage.loginButtonClick();
 			SignIn login = new SignIn(driver);
-			login.SignInuser(email, pass);
-			YourAccount account=new YourAccount(driver); 
-			account.NavigateToCart();
-			String ActualShoppingcartpageTitle = driver.getTitle();
-			System.out.println(ActualShoppingcartpageTitle );
+			String actualEmailAlert=login.SignInuser();
+			String expectedEmailAlert=pro.getProperty("expectedEmailAlert");
+			Assert.assertEquals(actualEmailAlert, expectedEmailAlert);
 			
-			String expectedShoppingcartpageTitle=pro.getProperty("expectedShoppingcartpageTitle");
-			Assert.assertEquals(ActualShoppingcartpageTitle,expectedShoppingcartpageTitle);
-			account.SignOut();
 		}
 		
 		@AfterTest
 		public void CloseApplication(){
-			driver.close();
+			//driver.close();
 		}
-		@DataProvider
-		 public static Object[][] ReadVariant() throws IOException
-		 {
-		 FileInputStream fileInputStream= new FileInputStream(System.getProperty("user.dir")+"//src//main//java//Resources//userdetails.xls");
-		 workbook = new HSSFWorkbook (fileInputStream);
-		 worksheet=workbook.getSheet(SheetName);
-		       HSSFRow Row=worksheet.getRow(0); 
-		   
-		     int RowNum = worksheet.getPhysicalNumberOfRows();
-		     int ColNum= Row.getLastCellNum(); 
-		     
-		     Object Data[][]= new Object[RowNum-1][ColNum]; 	     
-		     for(int i=0; i<RowNum-1; i++) 
-		     {  
-		     HSSFRow row= worksheet.getRow(i+1);
-		     
-		     for (int j=0; j<ColNum; j++) 
-		     {
-		     if(row==null)
-		     Data[i][j]= "";
-		     else 
-		     {
-		     HSSFCell cell= row.getCell(j);
-		     if(cell==null)
-		     Data[i][j]= ""; 
-		     else
-		     {
-		     String value=formatter.formatCellValue(cell);
-		     Data[i][j]=value;
-		     }
-		     }
-		     }
-		     }
-		 
-		     return Data;
-		    }
+		
 }

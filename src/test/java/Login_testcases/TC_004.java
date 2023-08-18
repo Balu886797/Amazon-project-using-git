@@ -1,11 +1,9 @@
-package TestCases;
+package Login_testcases;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -21,14 +19,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import PageObject.ChuckOutPage;
 import PageObject.HomePage;
-import PageObject.ShoppingCartPage;
 import PageObject.SignIn;
-import PageObject.YourAccount;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class TC_009 {
+public class TC_004 {
 
 	public  WebDriver driver;
     public Properties pro;
@@ -56,32 +51,18 @@ public class TC_009 {
 	}
 
 		@Test(dataProvider="ReadVariant")
-		public void TC_009(String email, String pass) throws Throwable {
-
-		    			
+		public void TC_004(String email, String pass) throws Throwable {
+		    String expectedPasswordAlert=pro.getProperty("expectedPasswordAlert");
 			HomePage homePage=new HomePage(driver);
 			homePage.loginButtonClick();
 			SignIn login = new SignIn(driver);
-			login.SignInuser(email, pass);
-			YourAccount account=new YourAccount(driver); 
-			account.NavigateToCart();
-			ShoppingCartPage cart=new ShoppingCartPage(driver);
-			cart.selectCartProduct();
-			ChuckOutPage chuckOut= new ChuckOutPage(driver);
-			ArrayList<Float> arr = chuckOut.chuckOutProcess();
-			Float SubTotal = arr.get(0);
-			Float DeliveryAmount = arr.get(1);
-			Float ActualTotal = arr.get(2);
-			float ExpectedTotal = SubTotal+DeliveryAmount;
-			Assert.assertEquals(ActualTotal,ExpectedTotal);
-			chuckOut.BacktoHomepage();
-			account.SignOut();
+			String actualPasswordAlert = login.SignInuser(email);
+			Assert.assertEquals(actualPasswordAlert, expectedPasswordAlert);
 		}
-		
 		
 		@AfterTest
 		public void CloseApplication(){
-			//driver.quit();
+			driver.close();
 		}
 		@DataProvider
 		 public static Object[][] ReadVariant() throws IOException

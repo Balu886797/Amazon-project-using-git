@@ -1,4 +1,4 @@
-package TestCases;
+package Login_testcases;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

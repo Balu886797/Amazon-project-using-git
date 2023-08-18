@@ -1,4 +1,4 @@
-package TestCases;
+package CartningTestCase;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,12 +19,14 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import PageObject.ChooseProductPage;
 import PageObject.HomePage;
+import PageObject.ShoppingCartPage;
 import PageObject.SignIn;
 import PageObject.YourAccount;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class TC_002 {
+public class TC_006 {
 
 	public  WebDriver driver;
     public Properties pro;
@@ -46,20 +48,32 @@ public class TC_002 {
 		 pro =new Properties();
 		 fis =new FileInputStream(System.getProperty("user.dir")+"//src//main//java//Resources//testData.properties");
 		 pro.load(fis);
-		 driver.get(pro.getProperty("url"));
-		
-			
+		 driver.get(pro.getProperty("url"));	
 	}
 
 		@Test(dataProvider="ReadVariant")
-		public void TC_002(String email, String pass) throws Throwable {
+		public void TC_006(String email, String pass) throws Throwable {
 
-		    String expectedUser=pro.getProperty("expectedUser");			
+		    			
 			HomePage homePage=new HomePage(driver);
 			homePage.loginButtonClick();
 			SignIn login = new SignIn(driver);
-			String ActualUser = login.SignInuser(email, pass);
-			Assert.assertEquals(ActualUser,expectedUser);
+			login.SignInuser(email, pass);
+			YourAccount account=new YourAccount(driver);
+			account.SearchProduct();
+			ChooseProductPage ChooseProduct=new ChooseProductPage(driver);
+			ChooseProduct.selectProduct();
+			ShoppingCartPage cart=new ShoppingCartPage(driver);
+			String ActualCartMessage = cart.cartMessage();
+			
+			String ActualShoppingcartpageTitle = driver.getTitle();
+			System.out.println(ActualShoppingcartpageTitle );
+			System.out.println(ActualCartMessage);
+			String expectedShoppingcartpageTitle=pro.getProperty("expectedShoppingcartpageTitle");
+			String expectedCartMessage=pro.getProperty("expectedCartMessage");
+			Assert.assertEquals(ActualShoppingcartpageTitle,expectedShoppingcartpageTitle);
+			Assert.assertEquals(ActualCartMessage,expectedCartMessage);
+			
 			YourAccount accout=new YourAccount(driver);
 			accout.SignOut();
 		}

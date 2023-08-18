@@ -1,9 +1,11 @@
-package TestCases;
+package CartningTestCase;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -19,14 +21,14 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import PageObject.ChooseProductPage;
+import PageObject.ChuckOutPage;
 import PageObject.HomePage;
 import PageObject.ShoppingCartPage;
 import PageObject.SignIn;
 import PageObject.YourAccount;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class TC_006 {
+public class TC_009 {
 
 	public  WebDriver driver;
     public Properties pro;
@@ -48,39 +50,38 @@ public class TC_006 {
 		 pro =new Properties();
 		 fis =new FileInputStream(System.getProperty("user.dir")+"//src//main//java//Resources//testData.properties");
 		 pro.load(fis);
-		 driver.get(pro.getProperty("url"));	
+		 driver.get(pro.getProperty("url"));
+		
+			
 	}
 
 		@Test(dataProvider="ReadVariant")
-		public void TC_006(String email, String pass) throws Throwable {
+		public void TC_009(String email, String pass) throws Throwable {
 
 		    			
 			HomePage homePage=new HomePage(driver);
 			homePage.loginButtonClick();
 			SignIn login = new SignIn(driver);
 			login.SignInuser(email, pass);
-			YourAccount account=new YourAccount(driver);
-			account.SearchProduct();
-			ChooseProductPage ChooseProduct=new ChooseProductPage(driver);
-			ChooseProduct.selectProduct();
+			YourAccount account=new YourAccount(driver); 
+			account.NavigateToCart();
 			ShoppingCartPage cart=new ShoppingCartPage(driver);
-			String ActualCartMessage = cart.cartMessage();
-			
-			String ActualShoppingcartpageTitle = driver.getTitle();
-			System.out.println(ActualShoppingcartpageTitle );
-			System.out.println(ActualCartMessage);
-			String expectedShoppingcartpageTitle=pro.getProperty("expectedShoppingcartpageTitle");
-			String expectedCartMessage=pro.getProperty("expectedCartMessage");
-			Assert.assertEquals(ActualShoppingcartpageTitle,expectedShoppingcartpageTitle);
-			Assert.assertEquals(ActualCartMessage,expectedCartMessage);
-			
-			YourAccount accout=new YourAccount(driver);
-			accout.SignOut();
+			cart.selectCartProduct();
+			ChuckOutPage chuckOut= new ChuckOutPage(driver);
+			ArrayList<Float> arr = chuckOut.chuckOutProcess();
+			Float SubTotal = arr.get(0);
+			Float DeliveryAmount = arr.get(1);
+			Float ActualTotal = arr.get(2);
+			float ExpectedTotal = SubTotal+DeliveryAmount;
+			Assert.assertEquals(ActualTotal,ExpectedTotal);
+			chuckOut.BacktoHomepage();
+			account.SignOut();
 		}
+		
 		
 		@AfterTest
 		public void CloseApplication(){
-			driver.close();
+			//driver.quit();
 		}
 		@DataProvider
 		 public static Object[][] ReadVariant() throws IOException

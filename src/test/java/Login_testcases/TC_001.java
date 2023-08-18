@@ -1,24 +1,21 @@
-package TestCases;
+package Login_testcases;
 
-import static org.testng.Assert.assertEquals;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+
 import java.time.Duration;
 import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.PageFactory;
+
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeMethod;
+
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import PageObject.HomePage;
-import PageObject.SignIn;
+import CartningTestCase.BaseTest;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 
